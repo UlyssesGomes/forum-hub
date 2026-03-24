@@ -36,7 +36,7 @@ This is a forum application for users to interact, creating topics and discussin
 
 - Java 21+
 - Spring Boot 3.5.9
-- <!-- database -->
+- maven<!-- database -->
 
 ---
 
@@ -45,8 +45,7 @@ This is a forum application for users to interact, creating topics and discussin
 Before start, you will need to install:
 
 - [Java 21+](https://jdk.java.net/archive/)
-- <!-- Banco de dados, Docker, etc -->
-
+- [Maven](https://maven.apache.org/download.cgi)
 ---
 
 ## How to run
@@ -111,6 +110,6 @@ git push origin feature/my-feature
 
 ---
 
-## Licença
+## License
 
 This project is licensed under [MIT](./LICENSE).
