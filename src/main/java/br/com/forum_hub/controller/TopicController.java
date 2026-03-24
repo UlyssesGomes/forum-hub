@@ -43,14 +43,14 @@ public class TopicController {
 
     @GetMapping
     public ResponseEntity<Page<DataListTopic>> listar(
-            @RequestParam(required = false) Long curso,
-            @RequestParam(required = false) String categoria,
-            @RequestParam(required = false, name = "sem-resposta") Boolean semResposta,
-            @RequestParam(required = false) Boolean solucionados,
-            @PageableDefault(size = 10, sort = {"dataCriacao"}) Pageable paginacao){
+            @RequestParam(required = false) Long courseId,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false, name = "unanswered") Boolean unanswered,
+            @RequestParam(required = false) Boolean isSolved,
+            @PageableDefault(size = 10, sort = {"creationDate"}) Pageable page){
 
-        var pagina = service.list(categoria, curso, semResposta,
-                solucionados, paginacao);
+        var pagina = service.list(category, courseId, unanswered,
+                isSolved, page);
         return ResponseEntity.ok(pagina);
     }
 
