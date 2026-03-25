@@ -3,3 +3,5 @@ CREATE TABLE courses (
     name VARCHAR(255) NOT NULL UNIQUE,
     category ENUM('DEVELOPMENT', 'IA', 'FRONTEND', 'DATA', 'INNOVATION', 'MARKETING', 'DESIGN') NOT NULL
 );
+
+INSERT INTO courses (name, category) VALUES ('Advanced Algorithms', 'DEVELOPMENT');

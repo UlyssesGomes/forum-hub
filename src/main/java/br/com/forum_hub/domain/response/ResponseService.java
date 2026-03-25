@@ -2,8 +2,10 @@ package br.com.forum_hub.domain.response;
 
 import br.com.forum_hub.domain.topic.Status;
 import br.com.forum_hub.domain.topic.TopicService;
+import br.com.forum_hub.domain.user.User;
 import br.com.forum_hub.infra.exception.RegraDeNegocioException;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,9 +32,11 @@ public class ResponseService {
             dbTopic.setStatus(Status.ANSWERED);
         }
 
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         dbTopic.incrementResponses();
 
-        var response = new Response(dataDTO, dbTopic);
+        var response = new Response(dataDTO, user, dbTopic);
         return repository.save(response);
     }
 

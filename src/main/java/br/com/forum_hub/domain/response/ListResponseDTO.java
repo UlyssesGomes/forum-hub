@@ -10,6 +10,6 @@ public record ListResponseDTO(
         Boolean isSolved
 ) {
     public ListResponseDTO(Response response) {
-        this(response.getId(), response.getMessage(), response.getAuthor(), response.getCreationDate(), response.getIsSolved());
+        this(response.getId(), response.getMessage(), response.getAuthor().getFullName(), response.getCreationDate(), response.getIsSolved());
     }
 }

@@ -1,6 +1,7 @@
 package br.com.forum_hub.domain.response;
 
 import br.com.forum_hub.domain.topic.Topic;
+import br.com.forum_hub.domain.user.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,7 +27,9 @@ public class Response {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String message;
-    private String author;
+    @ManyToOne
+    @JoinColumn(name="author_id")
+    private User author;
     private LocalDateTime creationDate;
     private Boolean isSolved;
 
@@ -34,9 +37,9 @@ public class Response {
     @JoinColumn(name = "topic_id")
     private Topic topic;
 
-    public Response(CreateResponseDTO dataDTO, Topic topic) {
+    public Response(CreateResponseDTO dataDTO, User author, Topic topic) {
         this.message = dataDTO.message();
-        this.author = dataDTO.author();
+        this.author = author;
         this.creationDate = LocalDateTime.now();
         this.isSolved = false;
         this.topic = topic;
