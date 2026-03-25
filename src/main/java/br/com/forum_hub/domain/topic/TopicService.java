@@ -2,7 +2,7 @@ package br.com.forum_hub.domain.topic;
 
 import br.com.forum_hub.domain.course.CourseService;
 import br.com.forum_hub.domain.user.User;
-import br.com.forum_hub.infra.exception.RegraDeNegocioException;
+import br.com.forum_hub.infra.exception.BusinessException;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -55,12 +55,12 @@ public class TopicService {
         if (topic.getStatus() == Status.UNANSWERED)
             repository.deleteById(id);
         else
-            throw new RegraDeNegocioException("Você não pode apagar um tópico que já foi respondido.");
+            throw new BusinessException("Você não pode apagar um tópico que já foi respondido.");
     }
 
     public Topic searchById(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new RegraDeNegocioException("Tópico não encontrado!"));
+                .orElseThrow(() -> new BusinessException("Tópico não encontrado!"));
 
     }
 

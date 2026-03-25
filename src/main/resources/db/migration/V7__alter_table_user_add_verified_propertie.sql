@@ -1,0 +1,3 @@
+ALTER TABLE users ADD COLUMN is_verified BOOLEAN DEFAULT true;
+ALTER TABLE users ADD COLUMN token TEXT;
+ALTER TABLE users ADD COLUMN expiration_token TIMESTAMP;

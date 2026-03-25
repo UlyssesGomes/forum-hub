@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -25,9 +26,12 @@ public class User implements UserDetails {
     private String fullName;
     private String email;
     private String password;
-    private String username;
+    private String nickname;
     private String biography;
     private String shortBiography;
+    private boolean isVerified;
+    private String token;
+    private LocalDateTime expirationToken;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -39,8 +43,12 @@ public class User implements UserDetails {
         return this.password;
     }
 
-    @Override
     public String getUsername() {
         return this.email;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return isVerified;
     }
 }

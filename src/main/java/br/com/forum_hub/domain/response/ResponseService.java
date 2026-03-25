@@ -3,7 +3,7 @@ package br.com.forum_hub.domain.response;
 import br.com.forum_hub.domain.topic.Status;
 import br.com.forum_hub.domain.topic.TopicService;
 import br.com.forum_hub.domain.user.User;
-import br.com.forum_hub.infra.exception.RegraDeNegocioException;
+import br.com.forum_hub.infra.exception.BusinessException;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ public class ResponseService {
         var dbTopic = topicService.searchById(idTopic);
 
         if(!dbTopic.getIsOpen()) {
-            throw new RegraDeNegocioException("O tópico está fechado! Você não pode adicionar mais respostas.");
+            throw new BusinessException("O tópico está fechado! Você não pode adicionar mais respostas.");
         }
 
         if(dbTopic.getQuantityResponses() == 0) {
@@ -56,7 +56,7 @@ public class ResponseService {
 
         var topic = response.getTopic();
         if(topic.getStatus() == Status.SOLVED)
-            throw new RegraDeNegocioException("O tópico já foi solucionado! Você não pode marcar mais de uma resposta como solução.");
+            throw new BusinessException("O tópico já foi solucionado! Você não pode marcar mais de uma resposta como solução.");
 
         topic.setStatus(Status.SOLVED);
         return response.checkAsSolved();
@@ -78,6 +78,6 @@ public class ResponseService {
 
     public Response searchById(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new RegraDeNegocioException("Resposta não encontrada!"));
+                .orElseThrow(() -> new BusinessException("Resposta não encontrada!"));
     }
 }

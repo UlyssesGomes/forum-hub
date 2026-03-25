@@ -1,6 +1,6 @@
 package br.com.forum_hub.infra.email;
 
-import br.com.forum_hub.infra.exception.RegraDeNegocioException;
+import br.com.forum_hub.infra.exception.BusinessException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -33,7 +33,7 @@ public class EmailService {
             helper.setSubject(assunto);
             helper.setText(conteudo, true);
         } catch(MessagingException | UnsupportedEncodingException e){
-            throw new RegraDeNegocioException("Erro ao enviar email");
+            throw new BusinessException("Erro ao enviar email");
         }
 
         enviadorEmail.send(message);
