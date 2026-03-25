@@ -14,14 +14,22 @@ public class CourseService {
         this.repository = repository;
     }
 
+    public Course save(CreateCourseDTO courseDTO) {
+        Course course = new Course();
+        course.setName(courseDTO.name());
+        course.setCategory(courseDTO.category());
+
+        return repository.save(course);
+    }
+
     public Course searchById(Long id) {
         return repository.findById(id).orElseThrow(() -> new RegraDeNegocioException("Curso não encontrado!"));
     }
 
-    public Page<CourseDTO> list(Category category, Pageable paginacao) {
+    public Page<CourseDTO> list(Category category, Pageable page) {
         if(category != null)
-            return repository.findByCategory(category, paginacao).map(CourseDTO::new);
-        return repository.findAll(paginacao).map(CourseDTO::new);
+            return repository.findByCategory(category, page).map(CourseDTO::new);
+        return repository.findAll(page).map(CourseDTO::new);
 
     }
 }

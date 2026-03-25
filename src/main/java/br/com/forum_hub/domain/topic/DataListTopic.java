@@ -13,6 +13,6 @@ public record DataListTopic(
         String course
 ) {
     public DataListTopic(Topic topic) {
-        this(topic.getId(), topic.getTitle(), topic.getMessage(), topic.getAuthor(), topic.getStatus(), topic.getCreationDate(), topic.getQuantityResponses(), topic.getCourse().getName());
+        this(topic.getId(), topic.getTitle(), topic.getMessage(), topic.getAuthor().getFullName(), topic.getStatus(), topic.getCreationDate(), topic.getQuantityResponses(), topic.getCourse().getName());
     }
 }

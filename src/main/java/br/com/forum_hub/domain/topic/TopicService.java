@@ -1,11 +1,13 @@
 package br.com.forum_hub.domain.topic;
 
 import br.com.forum_hub.domain.course.CourseService;
+import br.com.forum_hub.domain.user.User;
 import br.com.forum_hub.infra.exception.RegraDeNegocioException;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,8 +23,9 @@ public class TopicService {
 
     @Transactional
     public Topic create(DataRegisterTopic data) {
-        var curso = courseService.searchById(data.courseId());
-        var topic = new Topic(data, curso);
+        var course = courseService.searchById(data.courseId());
+        User author = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var topic = new Topic(data, author, course);
         return repository.save(topic);
     }
 

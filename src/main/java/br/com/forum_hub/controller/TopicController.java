@@ -35,14 +35,14 @@ public class TopicController {
     }
 
     @PostMapping
-    public ResponseEntity<DataListTopic> cadastrar(@RequestBody @Valid DataRegisterTopic dados, UriComponentsBuilder uriBuilder){
-        var topico = service.create(dados);
-        var uri = uriBuilder.path("/topicos/{id}").buildAndExpand(topico.getId()).toUri();
-        return ResponseEntity.created(uri).body(new DataListTopic(topico));
+    public ResponseEntity<DataListTopic> createTopic(@RequestBody @Valid DataRegisterTopic createData, UriComponentsBuilder uriBuilder){
+        var topic = service.create(createData);
+        var uri = uriBuilder.path("/topics/{id}").buildAndExpand(topic.getId()).toUri();
+        return ResponseEntity.created(uri).body(new DataListTopic(topic));
     }
 
     @GetMapping
-    public ResponseEntity<Page<DataListTopic>> listar(
+    public ResponseEntity<Page<DataListTopic>> listTopics(
             @RequestParam(required = false) Long courseId,
             @RequestParam(required = false) String category,
             @RequestParam(required = false, name = "unanswered") Boolean unanswered,
@@ -55,26 +55,26 @@ public class TopicController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DataDetailsTopic> detalhar(@PathVariable Long id){
+    public ResponseEntity<DataDetailsTopic> topicDetails(@PathVariable Long id){
         var topico = service.searchById(id);
         var respostas = responseService.searchResponseTopic(id);
         return ResponseEntity.ok(new DataDetailsTopic(topico, respostas));
     }
 
     @PutMapping
-    public ResponseEntity<DataListTopic> atualizar(@RequestBody @Valid DataActualizationTopic dados){
+    public ResponseEntity<DataListTopic> updateTopic(@RequestBody @Valid DataActualizationTopic dados){
         var topico = service.update(dados);
         return ResponseEntity.ok(new DataListTopic(topico));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> fechar(@PathVariable Long id){
+    public ResponseEntity<Void> closeTopic(@PathVariable Long id){
         service.close(id);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluir(@PathVariable Long id){
+    public ResponseEntity<Void> deleteTopic(@PathVariable Long id){
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

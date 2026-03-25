@@ -1,0 +1,5 @@
+ALTER TABLE topics DROP COLUMN author;
+ALTER TABLE topics ADD COLUMN author_id BIGINT NOT NULL;
+ALTER TABLE topics ADD CONSTRAINT fk_author_topic FOREIGN KEY (author_id)  REFERENCES topics(id)  ON DELETE CASCADE;
+
+

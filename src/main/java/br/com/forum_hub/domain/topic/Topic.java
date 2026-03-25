@@ -2,6 +2,7 @@ package br.com.forum_hub.domain.topic;
 
 import br.com.forum_hub.domain.course.Category;
 import br.com.forum_hub.domain.course.Course;
+import br.com.forum_hub.domain.user.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -30,7 +31,9 @@ public class Topic {
     private Long id;
     private String title;
     private String message;
-    private String author;
+    @ManyToOne
+    @JoinColumn(name="author_id")
+    private User author;
     private LocalDateTime creationDate;
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -43,10 +46,10 @@ public class Topic {
     @JoinColumn(name = "course_id")
     private Course course;
 
-    public Topic(DataRegisterTopic dataRegisterTopic, Course course) {
+    public Topic(DataRegisterTopic dataRegisterTopic, User author, Course course) {
         this.title = dataRegisterTopic.title();
         this.message = dataRegisterTopic.message();
-        this.author = dataRegisterTopic.author();
+        this.author = author;
         this.creationDate = LocalDateTime.now();
         this.status = Status.UNANSWERED;
         this.isOpen = true;
