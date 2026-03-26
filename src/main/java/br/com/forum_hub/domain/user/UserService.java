@@ -10,6 +10,8 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -48,6 +50,7 @@ public class UserService implements UserDetailsService {
                 newUser.biography(),
                 newUser.shortBiography(),
                 false,
+                true,
                 UUID.randomUUID().toString(),
                 LocalDateTime.now().plusMinutes(2),
                 List.of(role));
@@ -77,5 +80,10 @@ public class UserService implements UserDetailsService {
         Role role = roleRepository.findByItsName(roleDto.name()).orElseThrow(() -> new BusinessException("Role inválido."));
 
         user.getRoles().remove(role);
+    }
+
+    public Page<UserListDTO> listUsers(Pageable page) {
+        Page<User> pageUsers = repository.findAll(page);
+        return pageUsers.map(UserListDTO::new);
     }
 }

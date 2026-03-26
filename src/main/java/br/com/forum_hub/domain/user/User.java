@@ -31,6 +31,7 @@ public class User implements UserDetails {
     private String biography;
     private String shortBiography;
     private boolean isVerified;
+    private boolean isActive;
     private String token;
     private LocalDateTime expirationToken;
 
@@ -42,7 +43,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return roles;
     }
 
     @Override

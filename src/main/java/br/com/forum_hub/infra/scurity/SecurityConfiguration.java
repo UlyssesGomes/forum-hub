@@ -3,6 +3,9 @@ package br.com.forum_hub.infra.scurity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,6 +32,9 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(
                         req -> {
                             req.requestMatchers("/login/**").permitAll();
+                            req.requestMatchers(HttpMethod.GET, "/courses").permitAll();
+                            req.requestMatchers(HttpMethod.GET, "/topics/**").permitAll();
+                            req.requestMatchers("/users/**").hasRole("ADMIN");
                             req.anyRequest().authenticated();
                         }
                 )
@@ -44,5 +50,12 @@ public class SecurityConfiguration {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public RoleHierarchy hierarquiaPerfis(){
+        String hierarquia = "ROLE_ADMIN > ROLE_MODERATOR\n"+
+                "ROLE_MODERATOR > ROLE_PARTICIPANT";
+        return RoleHierarchyImpl.fromHierarchy(hierarquia);
     }
 }

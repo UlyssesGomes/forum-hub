@@ -32,4 +32,11 @@ public class CourseController {
         return ResponseEntity.ok(pagina);
     }
 
+    @GetMapping("{id}")
+    public ResponseEntity<CourseDTO> getOne(@PathVariable Long id) {
+        var course = service.searchById(id);
+        CourseDTO courseDTO = new CourseDTO(course);
+        return ResponseEntity.ok(courseDTO);
+    }
+
 }

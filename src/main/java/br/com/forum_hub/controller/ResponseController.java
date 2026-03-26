@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.nio.file.AccessDeniedException;
+
 @RestController
 @RequestMapping("topics/{idTopic}/responses")
 public class ResponseController {
@@ -40,7 +42,7 @@ public class ResponseController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ListResponseDTO> checkAsSolved(@PathVariable Long id){
+    public ResponseEntity<ListResponseDTO> checkAsSolved(@PathVariable Long id) throws AccessDeniedException {
         var response = service.checkAsSolved(id);
         return ResponseEntity.ok(new ListResponseDTO(response));
     }

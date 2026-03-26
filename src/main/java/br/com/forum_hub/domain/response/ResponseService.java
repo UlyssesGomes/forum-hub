@@ -1,19 +1,25 @@
 package br.com.forum_hub.domain.response;
 
+import br.com.forum_hub.domain.hierarchy.HierarchyService;
 import br.com.forum_hub.domain.topic.Status;
 import br.com.forum_hub.domain.topic.TopicService;
 import br.com.forum_hub.domain.user.User;
 import br.com.forum_hub.infra.exception.BusinessException;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @Service
 public class ResponseService {
     private final ResponseRepository repository;
     private final TopicService topicService;
+
+    @Autowired
+    private HierarchyService hierarchyService;
 
     public ResponseService(ResponseRepository repository, TopicService topicService) {
         this.repository = repository;
@@ -51,8 +57,12 @@ public class ResponseService {
     }
 
     @Transactional
-    public Response checkAsSolved(Long id) {
+    public Response checkAsSolved(Long id) throws AccessDeniedException {
         var response = searchById(id);
+
+        var userLogget = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(hierarchyService.userHaventPermission(userLogget, response.getTopic().getAuthor(), "ROLE_INSTRUTOR"))
+            throw new AccessDeniedException("Você não pode marcar essa resposta como solução!");
 
         var topic = response.getTopic();
         if(topic.getStatus() == Status.SOLVED)
