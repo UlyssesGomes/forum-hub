@@ -1,5 +1,6 @@
 package br.com.forum_hub.domain.user;
 
+import br.com.forum_hub.domain.role.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,6 +33,12 @@ public class User implements UserDetails {
     private boolean isVerified;
     private String token;
     private LocalDateTime expirationToken;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name ="user_id"),
+            inverseJoinColumns = @JoinColumn(name ="role_id"))
+    private List<Role> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
