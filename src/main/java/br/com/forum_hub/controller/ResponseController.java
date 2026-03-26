@@ -48,7 +48,7 @@ public class ResponseController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id){
+    public ResponseEntity<Void> delete(@PathVariable Long id) throws AccessDeniedException {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

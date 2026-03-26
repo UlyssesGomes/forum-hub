@@ -1,5 +1,6 @@
 package br.com.forum_hub.domain.user;
 
+import br.com.forum_hub.domain.hierarchy.HierarchyService;
 import br.com.forum_hub.domain.login.NewUserLoginDTO;
 import br.com.forum_hub.domain.role.Role;
 import br.com.forum_hub.domain.role.RoleDTO.RoleDTO;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -31,6 +34,8 @@ public class UserService implements UserDetailsService {
     private RoleRepository roleRepository;
     @Autowired
     private PasswordEncoder encoder;
+    @Autowired
+    private HierarchyService hierarchyService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -85,5 +90,26 @@ public class UserService implements UserDetailsService {
     public Page<UserListDTO> listUsers(Pageable page) {
         Page<User> pageUsers = repository.findAll(page);
         return pageUsers.map(UserListDTO::new);
+    }
+
+    @Transactional
+    public void deactivateAccount(Long id) {
+        User userToDeactivate = repository.findById(id).orElseThrow( () ->
+                new UsernameNotFoundException("User not found.")
+        );
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if(hierarchyService.isntSameUserAndHaventPermission(user, userToDeactivate, "ROLE_"+ RoleEnum.ADMIN))
+            throw new AccessDeniedException("You cannot deactivate other users.");
+
+        userToDeactivate.setActive(false);
+    }
+
+    @Transactional
+    public void activateAccount(Long id) {
+        User userToActivate = repository.findById(id).orElseThrow( () ->
+                new UsernameNotFoundException("User not found.")
+        );
+        userToActivate.setActive(true);
     }
 }

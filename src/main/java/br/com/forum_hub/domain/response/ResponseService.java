@@ -1,16 +1,17 @@
 package br.com.forum_hub.domain.response;
 
 import br.com.forum_hub.domain.hierarchy.HierarchyService;
+import br.com.forum_hub.domain.role.RoleEnum;
 import br.com.forum_hub.domain.topic.Status;
 import br.com.forum_hub.domain.topic.TopicService;
 import br.com.forum_hub.domain.user.User;
 import br.com.forum_hub.infra.exception.BusinessException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @Service
@@ -59,22 +60,29 @@ public class ResponseService {
     @Transactional
     public Response checkAsSolved(Long id) throws AccessDeniedException {
         var response = searchById(id);
-
-        var userLogget = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(hierarchyService.userHaventPermission(userLogget, response.getTopic().getAuthor(), "ROLE_INSTRUTOR"))
-            throw new AccessDeniedException("Você não pode marcar essa resposta como solução!");
-
         var topic = response.getTopic();
+
+        var userLogged = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if(!topic.getAuthor().getId().equals(userLogged.getId()))
+            if(hierarchyService.userHaventPermission(userLogged, "ROLE_"+ RoleEnum.MODERATOR.name()))
+                throw new AccessDeniedException("You cannot check this answer as solution!");
+
         if(topic.getStatus() == Status.SOLVED)
-            throw new BusinessException("O tópico já foi solucionado! Você não pode marcar mais de uma resposta como solução.");
+            throw new BusinessException("The topic was solved.");
 
         topic.setStatus(Status.SOLVED);
         return response.checkAsSolved();
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(Long id) throws AccessDeniedException {
         var response = searchById(id);
+        var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if(hierarchyService.isntSameUserAndHaventPermission(user, response.getAuthor(), "ROLE_"+ RoleEnum.MODERATOR.name()))
+            throw new AccessDeniedException("You cannot delete this answer!");
+
         var topic = response.getTopic();
 
         repository.deleteById(id);

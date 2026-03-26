@@ -1,9 +1,12 @@
 package br.com.forum_hub.domain.topic;
 
 import br.com.forum_hub.domain.course.CourseService;
+import br.com.forum_hub.domain.hierarchy.HierarchyService;
+import br.com.forum_hub.domain.role.RoleEnum;
 import br.com.forum_hub.domain.user.User;
 import br.com.forum_hub.infra.exception.BusinessException;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -13,13 +16,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class TopicService {
 
-    private final TopicRepository repository;
-    private final CourseService courseService;
-
-    public TopicService(TopicRepository repository, CourseService courseService) {
-        this.repository = repository;
-        this.courseService = courseService;
-    }
+    @Autowired
+    private TopicRepository repository;
+    @Autowired
+    private CourseService courseService;
+    @Autowired
+    private HierarchyService hierarchyService;
 
     @Transactional
     public Topic create(DataRegisterTopic data) {
@@ -51,7 +53,12 @@ public class TopicService {
 
     @Transactional
     public void delete(Long id) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var topic = searchById(id);
+
+        if(hierarchyService.isntSameUserAndHaventPermission(user, topic.getAuthor(), "ROLE_" + RoleEnum.MODERATOR.name()))
+            throw new BusinessException("User doesn't have permission or this is not their own topic.");
+
         if (topic.getStatus() == Status.UNANSWERED)
             repository.deleteById(id);
         else

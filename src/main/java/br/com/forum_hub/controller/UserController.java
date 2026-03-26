@@ -36,4 +36,16 @@ public class UserController {
 
         return ResponseEntity.ok(String.format("Role removed from user with id %d", id));
     }
+
+    @PatchMapping("deactivate-account/{id}")
+    public ResponseEntity deactivateAccount(@PathVariable Long id) {
+        userService.deactivateAccount(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("activate-account/{id}")
+    public ResponseEntity activateAccount(@PathVariable Long id) {
+        userService.activateAccount(id);
+        return ResponseEntity.noContent().build();
+    }
 }

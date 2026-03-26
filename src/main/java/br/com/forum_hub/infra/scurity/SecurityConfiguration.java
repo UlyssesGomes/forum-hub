@@ -33,11 +33,24 @@ public class SecurityConfiguration {
                         req -> {
                             req.requestMatchers("/login/**").permitAll();
                             req.requestMatchers(HttpMethod.GET, "/courses").permitAll();
+
+                            req.requestMatchers(HttpMethod.DELETE, "/topics/{id}").hasAnyRole("PARTICIPANT", "MODERATOR");
                             req.requestMatchers(HttpMethod.GET, "/topics/**").permitAll();
+
+                            req.requestMatchers(HttpMethod.PATCH, "/users/deactivate-account/{id}").hasAnyRole("PARTICIPANT", "MODERATOR", "ADMIN");
                             req.requestMatchers("/users/**").hasRole("ADMIN");
+
+                            req.requestMatchers(HttpMethod.PATCH, "topics/{idTopic}/responses/{id}").hasAnyRole("PARTICIPANT", "MODERATOR");
+                            req.requestMatchers(HttpMethod.DELETE, "topics/{idTopic}/responses/{id}").hasAnyRole("PARTICIPANT", "MODERATOR");
+                            req.requestMatchers(HttpMethod.PUT, "topics/{idTopic}/responses").hasRole("MODERATOR");
+
+                            req.requestMatchers("/h2-console/**").permitAll(); // Allow h2-console routes
                             req.anyRequest().authenticated();
                         }
                 )
+                .headers(headers -> headers              //
+                        .frameOptions(frame -> frame.sameOrigin())  // Allow h2-console iframe
+                )                                                                     //
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
@@ -54,8 +67,8 @@ public class SecurityConfiguration {
 
     @Bean
     public RoleHierarchy hierarquiaPerfis(){
-        String hierarquia = "ROLE_ADMIN > ROLE_MODERATOR\n"+
+        String hierarchy = "ROLE_ADMIN > ROLE_MODERATOR\n"+
                 "ROLE_MODERATOR > ROLE_PARTICIPANT";
-        return RoleHierarchyImpl.fromHierarchy(hierarquia);
+        return RoleHierarchyImpl.fromHierarchy(hierarchy);
     }
 }

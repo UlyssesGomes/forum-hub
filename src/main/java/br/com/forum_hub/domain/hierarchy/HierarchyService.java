@@ -13,11 +13,15 @@ public class HierarchyService {
     @Autowired
     private RoleHierarchy roleHierarchy;
 
-    public boolean userHaventPermission(User loggedUser, User author, String targetRole) {
+    public boolean isntSameUserAndHaventPermission(User loggedUser, User author, String targetRole) {
         if(loggedUser.getId().equals(author.getId()))
             return false;
-        return loggedUser.getAuthorities().stream()
-                .flatMap(authorite -> roleHierarchy.getReachableGrantedAuthorities(List.of(authorite)).stream())
+        return userHaventPermission(loggedUser, targetRole);
+    }
+
+    public boolean userHaventPermission(User user, String targetRole) {
+        return user.getAuthorities().stream()
+                .flatMap(authority -> roleHierarchy.getReachableGrantedAuthorities(List.of(authority)).stream())
                 .noneMatch(role -> role.getAuthority().equals(targetRole) );
     }
 }
