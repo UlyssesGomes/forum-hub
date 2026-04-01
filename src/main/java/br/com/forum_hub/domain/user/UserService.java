@@ -44,6 +44,7 @@ public class UserService implements UserDetailsService {
         });
     }
 
+    @Transactional
     public User registerNewUser(NewUserLoginDTO newUser) {
         Role role = roleRepository.findByItsName(RoleEnum.PARTICIPANT).orElseThrow(() -> new BusinessException("Role não encontrado."));
 
@@ -55,6 +56,26 @@ public class UserService implements UserDetailsService {
                 newUser.biography(),
                 newUser.shortBiography(),
                 false,
+                true,
+                UUID.randomUUID().toString(),
+                LocalDateTime.now().plusMinutes(2),
+                List.of(role));
+
+        return repository.save(user);
+    }
+
+    @Transactional
+    public User registerVerifiedNewUser(UserRegisterDTO userDto) {
+        Role role = roleRepository.findByItsName(RoleEnum.PARTICIPANT).orElseThrow(() -> new BusinessException("Role não encontrado."));
+
+        User user = new User(null,
+                userDto.fullName(),
+                userDto.email(),
+                encoder.encode(userDto.password()),
+                userDto.nickname(),
+                userDto.biography(),
+                userDto.shortBiography(),
+                true,
                 true,
                 UUID.randomUUID().toString(),
                 LocalDateTime.now().plusMinutes(2),
