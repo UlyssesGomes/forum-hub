@@ -44,6 +44,12 @@ public class UserService implements UserDetailsService {
         });
     }
 
+    public User verifyUserByEmail(String email) {
+        User user = repository.findByEmailIgnoreCase(email).orElse(null);
+
+        return user;
+    }
+
     @Transactional
     public User registerNewUser(NewUserLoginDTO newUser) {
         Role role = roleRepository.findByItsName(RoleEnum.PARTICIPANT).orElseThrow(() -> new BusinessException("Role não encontrado."));
@@ -77,8 +83,8 @@ public class UserService implements UserDetailsService {
                 userDto.shortBiography(),
                 true,
                 true,
-                UUID.randomUUID().toString(),
-                LocalDateTime.now().plusMinutes(2),
+                null,
+                null,
                 List.of(role));
 
         return repository.save(user);
