@@ -1,21 +1,21 @@
 package br.com.forum_hub.controller;
 
 import br.com.forum_hub.domain.login.external.AbstractExternalLoginService;
-import br.com.forum_hub.domain.login.external.github.ExternalLoginServiceGithubService;
+import br.com.forum_hub.domain.login.external.google.ExternalLoginServiceGoogleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/login/github")
-public class LoginGithubController extends AbstractExternalLoginController {
+@RequestMapping("/login/google")
+public class LoginGoogleController extends AbstractExternalLoginController {
 
     @Autowired
-    private ExternalLoginServiceGithubService loginGithubService;
+    private ExternalLoginServiceGoogleService loginGoogleService;
 
     @Override
     public AbstractExternalLoginService getService() {
-        return loginGithubService;
+        return loginGoogleService;
     }
 }
